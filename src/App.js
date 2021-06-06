@@ -1,23 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+// import AlbumFearture from "./features/Album";
+import TodoFearture from "./features/Todo";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Tạ Trung Hiếu
-        </p>
-        <a
-          className="App-link"
-          href="https://www.facebook.com/hieupisce"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          My Facebook
-        </a>
-      </header>
+    <div>
+      <TodoFearture />
+      {/* <AlbumFearture /> */}
     </div>
   );
 }
