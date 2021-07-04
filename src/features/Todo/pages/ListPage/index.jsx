@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TodoList from "../../components/TodoList";
+import TodoForm from "../../components/TodoForm";
 import queryString from "query-string";
 import { useLocation, useHistory, useRouteMatch } from "react-router-dom";
 
@@ -27,16 +28,14 @@ function ListPage(props) {
   const match = useRouteMatch();
   const [todoList, setTodoList] = useState(initList);
 
-  const queryStatus = () => {
+  const [filteredStatus, setFilteredStatus] = useState(() => {
     const params = queryString.parse(location.search);
     return params.status || "all";
-  }
-
-  const [filteredStatus, setFilteredStatus] = useState(queryStatus);
+  });
 
   useEffect(() => {
     const params = queryString.parse(location.search);
-    setFilteredStatus(queryStatus)
+    setFilteredStatus(params.status || "all");
   }, [location.search]);
 
   const handleTodoClick = (todo, idx) => {
@@ -63,8 +62,23 @@ function ListPage(props) {
     (todo) => filteredStatus === "all" || filteredStatus === todo.status
   );
 
+  const handleTodoFormSubmit = (values) => {
+    console.log("Form submit: ", values);
+    const newTodo = {
+      id: todoList.length + 1,
+      title: values.title,
+      status: "new",
+    };
+
+    const newTodoList = [ ...todoList, newTodo ];
+    setTodoList(newTodoList);
+  };
+
   return (
     <div>
+      <h3>What to do</h3>
+      <TodoForm onSubmit={handleTodoFormSubmit} />
+
       <h3>Todo List</h3>
       <TodoList todoList={renderTodoList} onTodoClick={handleTodoClick} />
 
