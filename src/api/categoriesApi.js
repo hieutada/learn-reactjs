@@ -1,8 +1,8 @@
-import axiosClient from "./axiosClient";
+import axiosClient from './axiosClient';
 
-export default categoriesApi = {
+const categoriesApi = {
   getAll(params) {
-    const url = "categories";
+    const url = '/categories';
     return axiosClient.get(url, { params: params });
   },
 
@@ -12,7 +12,7 @@ export default categoriesApi = {
   },
 
   add(data) {
-    const url = `categories`;
+    const url = `/categories`;
     return axiosClient.post(url, data);
   },
 
@@ -26,3 +26,5 @@ export default categoriesApi = {
     return axiosClient.delete(url);
   },
 };
+
+export default categoriesApi;

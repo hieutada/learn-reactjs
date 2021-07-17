@@ -1,18 +1,25 @@
-import AppBar from "@material-ui/core/AppBar";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import ExploreIcon from "@material-ui/icons/Explore";
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import Register from "../../features/Auth/components/Register";
-
+import { Box } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import IconButon from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import CloseIcon from '@material-ui/icons/Close';
+import ExploreIcon from '@material-ui/icons/Explore';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, NavLink } from 'react-router-dom';
+import Login from '../../features/Auth/components/Login';
+import Register from '../../features/Auth/components/Register';
+import { logout } from '../../features/Auth/userSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,15 +32,31 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   link: {
-    color: "#fff",
-    textDecoration: "none",
+    color: '#fff',
+    textDecoration: 'none',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: theme.spacing(1),
+    right: theme.spacing(1),
+    color: theme.palette.grey[500],
+    zIndex: 1,
   },
 }));
 
-export default function Header() {
-  const classes = useStyles();
+const MODE = {
+  REGISTER: 'register',
+  LOGIN: 'login',
+};
 
+export default function Header() {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(MODE.LOGIN);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const loggedInUser = useSelector((state) => state.user.current);
+  const isLoggedIn = !!loggedInUser.id;
+  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -42,6 +65,22 @@ export default function Header() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleUserClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogoutClick = () => {
+    const action = logout();
+    dispatch(action);
+    handleCloseMenu();
+  };
+
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
@@ -64,12 +103,43 @@ export default function Header() {
               <Button color="inherit">Albums</Button>
             </NavLink>
 
-            <Button color="inherit" onClick={handleClickOpen}>
-              Register
-            </Button>
+            <NavLink className={classes.link} to="/products">
+              <Button color="inherit">Products</Button>
+            </NavLink>
+
+            {isLoggedIn && (
+              <IconButon color="inherit" onClick={handleUserClick}>
+                <AccountCircleIcon />
+              </IconButon>
+            )}
+
+            {!isLoggedIn && (
+              <Button color="inherit" onClick={handleClickOpen}>
+                LOGIN
+              </Button>
+            )}
           </Toolbar>
         </Container>
       </AppBar>
+
+      <Menu
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        getContentAnchorEl={null}
+      >
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+      </Menu>
 
       <Dialog
         disableBackdropClick
@@ -78,17 +148,40 @@ export default function Header() {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
+        <IconButon className={classes.closeButton} onClick={handleClose}>
+          <CloseIcon />
+        </IconButon>
+
         <DialogContent>
           <DialogContentText>
-            <Register closeDialog={handleClose} />
+            {mode === MODE.REGISTER && (
+              <>
+                <Register closeDialog={handleClose} />
+
+                <Box textAlign="center">
+                  <Button color="primary" onClick={() => setMode(MODE.LOGIN)}>
+                    Already have an account. Loin here!
+                  </Button>
+                </Box>
+              </>
+            )}
+
+            {mode === MODE.LOGIN && (
+              <>
+                <Login closeDialog={handleClose} />
+
+                <Box textAlign="center">
+                  <Button
+                    color="primary"
+                    onClick={() => setMode(MODE.REGISTER)}
+                  >
+                    Don't have an account. Register here!
+                  </Button>
+                </Box>
+              </>
+            )}
           </DialogContentText>
         </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );
