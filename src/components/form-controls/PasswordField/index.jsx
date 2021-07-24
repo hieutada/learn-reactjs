@@ -1,15 +1,15 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { Controller } from "react-hook-form";
-import IconButton from "@material-ui/core/IconButton";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import FormControl from "@material-ui/core/FormControl";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { useState } from "react";
-import { FormHelperText } from "@material-ui/core";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller } from 'react-hook-form';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { useState } from 'react';
+import { FormHelperText } from '@material-ui/core';
 
 PasswordField.propTypes = {
   form: PropTypes.object.isRequired,
@@ -21,6 +21,7 @@ PasswordField.propTypes = {
 
 function PasswordField(props) {
   const { form, name, label, disabled } = props;
+  const { setValue } = form;
   const { errors } = form.formState;
   const hasError = !!errors[name];
 
@@ -31,12 +32,7 @@ function PasswordField(props) {
   };
 
   return (
-    <FormControl
-      fullWidth
-      margin="normal"
-      variant="outlined"
-      error={hasError}
-    >
+    <FormControl fullWidth margin="normal" variant="outlined" error={hasError}>
       <InputLabel htmlFor={name}>{label}</InputLabel>
       <Controller
         name={name}
@@ -45,7 +41,7 @@ function PasswordField(props) {
           <>
             <OutlinedInput
               id={name}
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               label={label}
               endAdornment={
                 <InputAdornment position="end">

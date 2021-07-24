@@ -4,7 +4,7 @@ import {
   Button,
   LinearProgress,
   makeStyles,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
 import PropTypes from "prop-types";

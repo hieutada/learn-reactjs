@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Badge, Box } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -14,12 +14,14 @@ import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import CloseIcon from '@material-ui/icons/Close';
 import ExploreIcon from '@material-ui/icons/Explore';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import Login from '../../features/Auth/components/Login';
 import Register from '../../features/Auth/components/Register';
 import { logout } from '../../features/Auth/userSlice';
+import { cartItemsCountSelector } from '../../features/Cart/selectors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,8 +57,10 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const loggedInUser = useSelector((state) => state.user.current);
-  const isLoggedIn = !!loggedInUser.id;
+  const cartItemCount = useSelector(cartItemsCountSelector);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const isLoggedIn = !!loggedInUser.id;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,6 +82,10 @@ export default function Header() {
     const action = logout();
     dispatch(action);
     handleCloseMenu();
+  };
+
+  const handleCartClick = () => {
+    history.push('/cart');
   };
 
   const classes = useStyles();
@@ -107,12 +115,26 @@ export default function Header() {
               <Button color="inherit">Products</Button>
             </NavLink>
 
+            {/* Dang nhap thanh cong*/}
             {isLoggedIn && (
-              <IconButon color="inherit" onClick={handleUserClick}>
-                <AccountCircleIcon />
-              </IconButon>
+              <>
+                <IconButon color="inherit">
+                  <Badge
+                    badgeContent={cartItemCount}
+                    color="secondary"
+                    onClick={handleCartClick}
+                  >
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButon>
+
+                <IconButon color="inherit" onClick={handleUserClick}>
+                  <AccountCircleIcon />
+                </IconButon>
+              </>
             )}
 
+            {/* Chua dang nhap */}
             {!isLoggedIn && (
               <Button color="inherit" onClick={handleClickOpen}>
                 LOGIN

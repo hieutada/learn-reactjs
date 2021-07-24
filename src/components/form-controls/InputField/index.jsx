@@ -12,7 +12,7 @@ InputField.propTypes = {
 };
 
 function InputField(props) {
-  const { form, name, label, disabled } = props;
+  const { form, type, name, label, disabled } = props;
   const { errors } = form.formState;
   const hasError = !!errors[name];
 
@@ -31,6 +31,7 @@ function InputField(props) {
           helperText={errors[name]?.message}
           name={name}
           value={value}
+          type={type}
           onChange={onChange}
           onBlur={onBlur}
         />

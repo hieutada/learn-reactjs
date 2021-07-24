@@ -1,7 +1,10 @@
 import { Box, Container, Grid, makeStyles, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
-import React, { useEffect, useState } from 'react';
+import queryString from 'query-string';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import productsApi from '../../../api/productsApi';
+import FilterViewer from '../components/FilterViewer';
 import ProductFilters from '../components/ProductFilters';
 import ProductList from '../components/ProductList';
 import ProductSkeletonList from '../components/ProductSkeletonList';
@@ -29,23 +32,35 @@ const useStyles = makeStyles((theme) => ({
 
 function ListPage(props) {
   const classes = useStyles();
+
+  const history = useHistory();
+  const location = useLocation();
+
+  const queryParams = useMemo(() => {
+    const params = queryString.parse(location.search);
+
+    return {
+      ...params,
+      _page: Number.parseInt(params._page) || 1,
+      _limit: Number.parseInt(params._limit) || 12,
+      _sort: params._sort || 'salePrice:ASC',
+      isPromotion: params.isPromotion === 'true',
+      isFreeShip: params.isFreeShip === 'true',
+    };
+  }, [location.search]);
+
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     limit: 12,
     page: 1,
   });
-  const [filters, setFilters] = useState({
-    _limit: 12,
-    _page: 1,
-    _sort: 'salePrice:ASC',
-  });
 
+  //todo: get data khi filters thay doi
   useEffect(() => {
     (async () => {
       try {
-        const { data, pagination } = await productsApi.getAll(filters);
-        console.log(pagination);
+        const { data, pagination } = await productsApi.getAll(queryParams);
         setProductList(data);
         setPagination(pagination);
       } catch (error) {
@@ -54,24 +69,53 @@ function ListPage(props) {
 
       setLoading(false);
     })();
-  }, [filters]);
+  }, [queryParams]);
 
-  // Phan trang
+  //todo: Thay doi phan trang
   const handlePageChange = (event, page) => {
-    setFilters((prevFilters) => ({ ...prevFilters, _page: page }));
+    const filters = {
+      ...queryParams,
+      _page: page,
+    };
+
+    history.push({
+      pathname: history.location.pathname,
+      search: queryString.stringify(filters),
+    });
   };
 
-  // Sap xep
+  //todo: Thay doi thu tu sap xep
   const handleSortChange = (newSortValue) => {
-    setFilters((prevFilters) => ({ ...prevFilters, _sort: newSortValue }));
+    const filters = {
+      ...queryParams,
+      _sort: newSortValue,
+    };
+
+    history.push({
+      pathname: history.location.pathname,
+      search: queryString.stringify(filters),
+    });
   };
 
-  // Phan loai
+  //todo: Thay doi trong filters
   const handleFiltersChange = (newFilters) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
+    const filters = {
+      ...queryParams,
       ...newFilters,
-    }));
+    };
+
+    history.push({
+      pathname: history.location.pathname,
+      search: queryString.stringify(filters),
+    });
+  };
+
+  //todo: Thay doi hien thi filter list
+  const setNewFilters = (newFilters) => {
+    history.push({
+      pathname: history.location.pathname,
+      search: queryString.stringify(newFilters),
+    });
   };
 
   return (
@@ -80,7 +124,10 @@ function ListPage(props) {
         {/* Left Column*/}
         <Grid item className={classes.left}>
           <Paper elevation={1}>
-            <ProductFilters filters={filters} onChange={handleFiltersChange} />
+            <ProductFilters
+              filters={queryParams}
+              onChange={handleFiltersChange}
+            />
           </Paper>
         </Grid>
 
@@ -89,11 +136,14 @@ function ListPage(props) {
           <Paper elevation={1}>
             {/* Sap xep */}
             <ProductSort
-              currentSort={filters._sort}
+              currentSort={queryParams._sort}
               onChange={handleSortChange}
             />
 
-            {/* Loading */}
+            {/* Hien thi filter list*/}
+            <FilterViewer filters={queryParams} onChange={setNewFilters} />
+
+            {/* Loading - Hien thi danh sach */}
             {loading ? (
               <ProductSkeletonList length={12} />
             ) : (

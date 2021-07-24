@@ -30,13 +30,16 @@ FilterByCategory.propTypes = {
 };
 
 function FilterByCategory({ onChange }) {
-  const [categoryList, setCategoryList] = useState([]);
+  
   const classes = useStyles();
+
+  const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
         const list = await categoriesApi.getAll();
+
         setCategoryList(
           list.map((x) => ({
             id: x.id,
@@ -51,7 +54,7 @@ function FilterByCategory({ onChange }) {
 
   const handleCategoryClick = (category) => {
     if (onChange) {
-      onChange(category.id);
+      onChange(category);
     }
   };
 

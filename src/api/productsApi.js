@@ -12,6 +12,8 @@ const productsApi = {
     // Remove un-needed key
     delete newParams._page;
 
+    console.log('getAll - newParams: ', newParams)
+
     // Fetch product list + count
     const productList = await axiosClient.get("/products", {
       params: newParams,

@@ -12,21 +12,26 @@ ProductFilters.propTypes = {
 };
 
 function ProductFilters({ filters, onChange }) {
-  const handleCategoryChange = (newCategoryId) => {
+  // thay doi loai san pham
+  const handleCategoryChange = (newCategory) => {
+
     if (!onChange) return;
 
     const newFilters = {
-      'category.id': newCategoryId,
+      'category.id': newCategory.id,
+      'category.name': newCategory.name,
     };
 
     onChange(newFilters);
   };
 
+  // thay doi khoang gia
   const handlePriceChange = (values) => {
     if (onChange) onChange(values);
   };
 
-  const handleChange = (values) => {
+  // thay doi dich vu
+  const handleServiceChange = (values) => {
     if (onChange) onChange(values);
   };
 
@@ -35,7 +40,7 @@ function ProductFilters({ filters, onChange }) {
       <Box>
         <FilterByCategory onChange={handleCategoryChange} />
         <FilterByPrice onChange={handlePriceChange} />
-        <FilterByService filters={filters} onChange={handleChange}/>
+        <FilterByService filters={filters} onChange={handleServiceChange}/>
       </Box>
     </div>
   );
