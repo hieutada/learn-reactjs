@@ -1,9 +1,9 @@
 .todo-list {
-  & > li {
+  & > .todo-item {
     cursor: pointer;
   }
 
-  & > li.completed {
+  & > .completed {
     color: darkgray;
     font-style: italic;
     text-decoration: line-through;

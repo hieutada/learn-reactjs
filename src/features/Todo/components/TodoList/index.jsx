@@ -1,6 +1,10 @@
-import React from "react";
-import PropTypes, { func } from "prop-types";
+import {
+  List,
+  ListItem, ListItemText
+} from "@material-ui/core";
 import classname from "classname";
+import PropTypes, { func } from "prop-types";
+import React from "react";
 import "./style.scss";
 
 TodoList.propTypes = {
@@ -14,18 +18,19 @@ TodoList.defaultProps = {
 };
 
 function TodoList(props) {
-  const { todoList,  onTodoClick} = props;
+  const { todoList, onTodoClick } = props;
 
   const handleTodoClick = (todo, idx) => {
-      if (!onTodoClick) return;
+    if (!onTodoClick) return;
 
-      onTodoClick(todo, idx)
-  }
+    onTodoClick(todo, idx);
+  };
 
   return (
-    <ul className="todo-list">
+    <List component='nav' className='todo-list'>
       {todoList.map((todo, idx) => (
-        <li
+
+        <ListItem
           key={todo.id}
           className={classname({
             "todo-item": true,
@@ -33,10 +38,10 @@ function TodoList(props) {
           })}
           onClick={() => handleTodoClick(todo, idx)}
         >
-          {todo.title}
-        </li>
+          <ListItemText primary={todo.title} />
+        </ListItem>
       ))}
-    </ul>
+    </List>
   );
 }
 

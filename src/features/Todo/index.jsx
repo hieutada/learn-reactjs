@@ -11,7 +11,6 @@ function TodoFearture(props) {
       <Switch>
         <Route path={match.path} component={ListPage} exact />
         <Route path={`${match.path}/:todoID`} component={DetailPage} />
-        <Route component={NotFound} />
       </Switch>
     </div>
   );
